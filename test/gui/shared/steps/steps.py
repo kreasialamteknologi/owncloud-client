@@ -8,6 +8,7 @@ import re
 import urllib.request
 import json
 import requests
+import builtins
 import shutil
 
 from objectmaphelper import RegularExpression
@@ -494,10 +495,42 @@ def createFolder(context, foldername, username=None):
     os.makedirs(path)
 
 
+@When(
+    'user "|any|" creates "|any|" files each of size "|any|" bytes inside the folder "|any|"'
+)
+def step(context, username, filenumber, filesize, foldername):
+    syncPath = context.userData['currentUserSyncPath']
+    filesize = builtins.int(filesize)
+    snooze(5)
+    for i in range(0, builtins.int(filenumber)):
+        filename = f"file{i}.txt"
+        uploadFile(context, join(foldername, filename), filesize)
+
+
+@When('user "|any|" creates "|any|" subfolders inside the folder "|any|"')
+def step(context, username, folder_count, folder):
+    syncPath = context.userData['currentUserSyncPath']
+    for i in range(builtins.int(folder_count)):
+        sub_folder = 'sub{i}'.format(i=i)
+        path = join(syncPath, folder, sub_folder)
+        os.mkdir(path)
+
+
 def renameFileFolder(context, source, destination):
     source = join(context.userData['currentUserSyncPath'], source)
     destination = join(context.userData['currentUserSyncPath'], destination)
     rename(source, destination)
+
+
+@When('user "|any|" creates a file "|any|" with size "|any|" inside the sync folder')
+def step(context, username, filename, filesize):
+    uploadFile(context, filename, filesize)
+
+
+def uploadFile(context, filename, filesize):
+    file = join(context.userData['currentUserSyncPath'], filename)
+    cmd = "truncate -s {filesize} {file}".format(filesize=filesize, file=file)
+    os.system(cmd)
 
 
 @When('the user copies the folder "|any|" to "|any|"')
@@ -510,6 +543,15 @@ def step(context, sourceFolder, destinationFolder):
 @When(r'the user renames a (file|folder) "([^"]*)" to "([^"]*)"', regexp=True)
 def step(context, type, source, destination):
     renameFileFolder(context, source, destination)
+
+
+@When('user move the file "|any|" to folder "|any|"')
+def step(context, file, destinationFolder):
+    source_dir = join(context.userData['currentUserSyncPath'], file)
+    destination_dir = join(
+        context.userData['currentUserSyncPath'], destinationFolder, file
+    )
+    shutil.move(source_dir, destination_dir)
 
 
 @Given(r"^(.*) on the server (.*)$", regexp=True)
@@ -686,6 +728,12 @@ def step(context, filename):
 def step(context, filename):
     activity = Activity()
     activity.checkBlackListedFileExist(filename)
+
+
+@When('the user waits until at least a file is blacklisted')
+def step(context):
+    activity = Activity()
+    activity.checkAtLeastABlacklistedFile()
 
 
 @When('the user selects "|any|" tab in the activity')

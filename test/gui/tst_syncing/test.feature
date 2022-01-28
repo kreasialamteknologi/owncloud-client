@@ -328,3 +328,92 @@ Feature: Syncing files
         And as "Alice" file "testaudio.mp3" should exist on the server
         And as "Alice" file "test_video.mp4" should exist on the server
         And as "Alice" file "simple.txt" should exist on the server
+
+
+    Scenario Outline: File with long name (228 characters) can be synced
+        Given user "Alice" has set up a client with default settings
+        When user "Alice" creates a file "<filename>" with the following content inside the sync folder
+            """
+            test content
+            """
+        And the user waits for file "<filename>" to be synced
+        Then as "Alice" file "<filename>" should exist on the server
+        Examples:
+            | filename                                                                                                                                                                                                                             |
+            | thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLon.txt |
+
+
+    Scenario Outline: Filename with long name(>228 characters) raise an error
+        Given user "Alice" has set up a client with default settings
+        When user "Alice" creates a file "<filename>" with the following content inside the sync folder
+            """
+            test contents
+            """
+        And the user clicks on the activity tab
+        And the user selects "Not Synced" tab in the activity
+        And the user waits until at least a file is blacklisted
+        Then the file "<filename>" should be blacklisted
+        Examples:
+            | filename                                                                                                                                                                                                                              |
+            | aQuickBrownFoxJumpsOverAVeryLazyDog-aQuickBrownFoxJumpsOverAVeryLazyDog-aQuickBrownFoxJumpsOverAVeryLazyDog-aQuickBrownFoxJumpsOverAVeryLazyDog-aQuickBrownFoxJumpsOverAVeryLazyDog-aQuickBrownFoxJumpsOverAVeryLazyDog-aQuickBro.txt |
+
+
+    Scenario: Files with same name but different extension sync correctly
+        Given user "Alice" has set up a client with default settings
+        When user "Alice" creates a file "file1.txt" with the following content inside the sync folder
+            """
+            test contents
+            """
+        And user "Alice" creates a file "file1.odt" with the following content inside the sync folder
+            """
+            test contents
+            """
+        And the user waits for the files to sync
+        Then as "Alice" file "file1.txt" should exist on the server
+        And as "Alice" file "file1.odt" should exist on the server
+
+
+    Scenario: File of 1 GB size sync succefully
+        Given user "Alice" has set up a client with default settings
+        When user "Alice" creates a file "newfile.txt" with size "1GB" inside the sync folder
+        And the user waits for file "newfile.txt" to be synced
+        Then as "Alice" file "newfile.txt" should exist on the server
+
+
+    Scenario: File with spaces in the name can sync
+        Given user "Alice" has set up a client with default settings
+        When user "Alice" creates a file "file with space.txt" with the following content inside the sync folder
+            """
+            test contents
+            """
+        And user "Alice" creates a folder "testfolder" inside the sync folder
+        And user move the file "file with space.txt" to folder "testfolder"
+        And the user waits for folder "testfolder" to be synced
+        Then as "Alice" file "testfolder/file with space.txt" should exist on the server
+
+
+    Scenario: Folders with 500 files can sync successfully
+        Given user "Alice" has set up a client with default settings
+        When user "Alice" creates a folder "folder1" inside the sync folder
+        And user "Alice" creates "500" files each of size "1048576" bytes inside the folder "folder1"
+        And the user waits for the files to sync
+        And user "Alice" creates a folder "folder2" inside the sync folder
+        And user "Alice" creates "500" files each of size "1048576" bytes inside the folder "folder2"
+        And the user waits for the files to sync
+        Then as "Alice" folder "folder1" should exist on the server
+        And as user "Alice" folder "folder1" should contain "500" items on the server
+        Then as "Alice" folder "folder2" should exist on the server
+        And as user "Alice" folder "folder2" should contain "500" items on the server
+
+
+    Scenario: Folders with 15 subfolders can sync successfully
+        Given user "Alice" has set up a client with default settings
+        When user "Alice" creates a folder "folder1" inside the sync folder
+        And user "Alice" creates a folder "folder2" inside the sync folder
+        And user "Alice" creates "100" subfolders inside the folder "folder1"
+        And user "Alice" creates "100" subfolders inside the folder "folder2"
+        And the user waits for the files to sync
+        Then as "Alice" folder "folder1" should exist on the server
+        And as user "Alice" folder "folder1" should contain "100" items on the server
+        And as "Alice" folder "folder2" should exist on the server
+        And as user "Alice" folder "folder2" should contain "100" items on the server
