@@ -492,14 +492,14 @@ Feature: Sharing
             | path       | textfile.txt |
             | expireDate | 2031-10-14   |
         Then as user "Alice" the file "textfile.txt" should have a public link on the server
-        And the fields of the last public link share response of user "Alice" should include on the server
+        And the last public link share response of user "Alice" should include the following fields on the server
             | expireDate | 2031-10-14 |
         When the user closes the sharing dialog
         And the user creates a new public link with following settings using the client-UI:
             | path       | FOLDER     |
             | expireDate | 2031-12-30 |
         Then as user "Alice" the file "FOLDER" should have a public link on the server
-        And the fields of the last public link share response of user "Alice" should include on the server
+        And the last public link share response of user "Alice" should include the following fields on the server
             | expireDate | 2031-12-30 |
 
     @skip @issue-9321

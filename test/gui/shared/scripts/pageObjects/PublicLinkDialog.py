@@ -160,7 +160,7 @@ class PublicLinkDialog:
 
         if not expireDate == "default":
             expDate = datetime.strptime(expireDate, '%Y-%m-%d')
-            expYear = expDate.year - 2000
+#             expYear = expDate.year - 2000
             squish.mouseClick(
                 squish.waitForObject(self.EXPIRATION_DATE_FIELD),
                 0,
@@ -170,19 +170,20 @@ class PublicLinkDialog:
             )
             squish.nativeType("<Delete>")
             squish.nativeType("<Delete>")
-            squish.nativeType(expDate.month)
             squish.nativeType(expDate.day)
-            squish.nativeType(expYear)
+            squish.nativeType(expDate.month)
+            squish.nativeType(expDate.year)
             squish.nativeType("<Return>")
 
             actualDate = str(
                 squish.waitForObjectExists(self.EXPIRATION_DATE_FIELD).displayText
             )
-            expectedDate = f"{expDate.month}/{expDate.day}/{expYear}"
+            expectedDate = f"{expDate.day}/{expDate.month}/{expDate.year}"
+
             if not actualDate == expectedDate:
                 # retry with workaround
                 self.setExpirationDateWithWorkaround(
-                    expYear, expDate.month, expDate.day
+                    expDate.year, expDate.month, expDate.day
                 )
             squish.waitFor(
                 lambda: (test.vp("publicLinkExpirationProgressIndicatorInvisible"))
@@ -214,11 +215,11 @@ class PublicLinkDialog:
         squish.nativeType(year)
         # Move the cursor to day field
         squish.nativeType("<Ctrl+Left>")
-        squish.nativeType(day)
+        squish.nativeType(month)
         # Move the cursor to month field
         squish.nativeType("<Ctrl+Left>")
         squish.nativeType("<Ctrl+Left>")
-        squish.nativeType(month)
+        squish.nativeType(day)
         squish.nativeType("<Return>")
 
     def getRadioObjectForPermssion(self, permissions):
