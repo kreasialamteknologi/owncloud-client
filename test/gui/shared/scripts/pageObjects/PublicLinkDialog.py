@@ -160,7 +160,7 @@ class PublicLinkDialog:
 
         if not expireDate == "default":
             expDate = datetime.strptime(expireDate, '%Y-%m-%d')
-#             expYear = expDate.year - 2000
+            #             expYear = expDate.year - 2000
             squish.mouseClick(
                 squish.waitForObject(self.EXPIRATION_DATE_FIELD),
                 0,
