@@ -69,6 +69,10 @@ def getResourcePath(context, resource, user=None):
 
 
 def startClient(context):
+    import locale
+    test.log("The system has following locale")
+    test.log(str(locale.getlocale(locale.LC_TIME)))
+
     squish.startApplication(
         "owncloud OWNCLOUD_CORE_DUMP=1 -s"
         + " --logfile "
