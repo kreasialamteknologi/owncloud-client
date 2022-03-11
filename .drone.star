@@ -262,7 +262,7 @@ def build_client(ctx, c_compiler, cxx_compiler, build_type, generator, build_com
             "image": "owncloudci/client:2.9-amd64",
             "pull": "always",
             "environment": {
-                "LC_ALL": "C.UTF-8",
+                "LC_ALL": "de_DE.UTF-8",
             },
             "commands": [
                 'mkdir -p "' + build_dir + '"',
@@ -275,7 +275,7 @@ def build_client(ctx, c_compiler, cxx_compiler, build_type, generator, build_com
             "image": "owncloudci/client:2.9-amd64",
             "pull": "always",
             "environment": {
-                "LC_ALL": "C.UTF-8",
+                "LC_ALL": "de_DE.UTF-8",
             },
             "commands": [
                 'cd "' + build_dir + '"',
