@@ -159,8 +159,14 @@ class PublicLinkDialog:
             self.toggleExpirationDate()
 
         if not expireDate == "default":
+            # get datetime in format %d %b %Y from the string expireDate
+            #             expDate = datetime.strptime(datetime.strftime(datetime.strptime(expireDate, '%Y-%m-%d'), '%d %b %Y'), '%d %b %Y')
             expDate = datetime.strptime(expireDate, '%Y-%m-%d')
-            expYear = expDate.year - 2000
+
+            # convert month into %b formatted string
+            expireMonth = datetime.strftime(expDate, '%b')
+
+            # expYear = expDate.year - 2000
             squish.mouseClick(
                 squish.waitForObject(self.EXPIRATION_DATE_FIELD),
                 0,
@@ -171,19 +177,19 @@ class PublicLinkDialog:
             squish.nativeType("<Delete>")
             squish.nativeType("<Delete>")
             squish.nativeType(expDate.day)
-            squish.nativeType(expDate.month)
-            squish.nativeType(expYear)
+            squish.nativeType(expireMonth)
+            squish.nativeType(expDate.year)
             squish.nativeType("<Return>")
 
             actualDate = str(
                 squish.waitForObjectExists(self.EXPIRATION_DATE_FIELD).displayText
             )
-            expectedDate = f"{expDate.day}.{expDate.month}.{expYear}"
+            expectedDate = f"{expDate.day} {expireMonth} {expDate.year}"
 
             if not actualDate == expectedDate:
                 # retry with workaround
                 self.setExpirationDateWithWorkaround(
-                    expYear, expDate.month, expDate.day
+                    expDate.year, expireMonth, expDate.day
                 )
             squish.waitFor(
                 lambda: (test.vp("publicLinkExpirationProgressIndicatorInvisible"))
