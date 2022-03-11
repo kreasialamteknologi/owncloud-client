@@ -69,7 +69,6 @@ def getResourcePath(context, resource, user=None):
 
 
 def startClient(context):
-    environ["LC_TIME"] = "de_DE.UTF-8"
     squish.startApplication(
         "owncloud OWNCLOUD_CORE_DUMP=1 -s"
         + " --logfile "
