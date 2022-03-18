@@ -343,7 +343,7 @@ Feature: Syncing files
             | thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLongFileNameToCheckThatItWorks-thisIsAVeryLon.txt |
 
 
-    Scenario Outline: Filename with long name(>228 characters) raise an error
+    Scenario Outline: Filename with long name(>228 characters) is blacklisted
         Given user "Alice" has set up a client with default settings
         When user "Alice" creates a file "<filename>" with the following content inside the sync folder
             """
@@ -373,7 +373,7 @@ Feature: Syncing files
         And as "Alice" file "file1.odt" should exist on the server
 
 
-    Scenario: File of 1 GB size sync succefully
+    Scenario: File of 1 GB size sync successfully
         Given user "Alice" has set up a client with default settings
         When user "Alice" creates a file "newfile.txt" with size "1GB" inside the sync folder
         And the user waits for file "newfile.txt" to be synced
